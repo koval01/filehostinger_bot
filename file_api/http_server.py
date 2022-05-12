@@ -28,9 +28,12 @@ class Mime:
 
     @property
     def extract(self) -> str:
-        return self.mimetypes.types_map[
-            re.search(self.pattern, self.path_or_file).group(0)
-        ]
+        try:
+            return self.mimetypes.types_map[
+                re.search(self.pattern, self.path_or_file).group(0)
+            ]
+        except:
+            return ""
 
     def __str__(self) -> str:
         return self.extract
@@ -48,6 +51,8 @@ def get_file(type_file: str, file_name: str):
     )
     try:
         content_type = Mime(file_name)
+        if not content_type:
+            raise
     except Exception as e:
         logging.debug("MIME detect error! Details: %s" % e)
         content_type = media.headers.get('Content-Type')
