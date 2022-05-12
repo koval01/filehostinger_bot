@@ -1,4 +1,4 @@
-from flask import Flask, request, stream_with_context
+from flask import Flask, request, stream_with_context, Response
 from werkzeug.routing import BaseConverter
 from requests import get as http_get
 import config
@@ -24,4 +24,8 @@ def get_file(type_file: str, file_name: str):
             'user-agent': request.headers.get('user-agent')
         }
     )
-    return app.response_class(stream_with_context(response.raw))
+    return Response(
+        stream_with_context(response.raw),
+        content_type=response.headers.get('content-type'),
+        status=response.status_code
+    )
