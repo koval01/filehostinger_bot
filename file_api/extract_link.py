@@ -30,7 +30,7 @@ class Extractor:
     def check_size(self, file_data: dict) -> bool:
         return True if 20971520 > file_data["file_size"] else False
 
-    async def build_link(self) -> str or None:
+    async def build_link(self) -> str:
         try:
             resp = await self.get_file_data
             if self.check_size(resp):
@@ -42,3 +42,4 @@ class Extractor:
                 )
         except Exception as e:
             log.error("%s: %s" % (self.build_link.__name__, e))
+        return "Unknown error"
