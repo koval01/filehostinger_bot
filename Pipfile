@@ -9,7 +9,6 @@ requests = "*"
 flask = "*"
 werkzeug = "*"
 gunicorn = "*"
-python-magic = "*"
 
 [dev-packages]
 

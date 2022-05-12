@@ -2,7 +2,8 @@ from flask import Flask, request, stream_with_context, Response
 from werkzeug.routing import BaseConverter
 from requests import get as http_get
 import config
-import magic
+import mimetypes
+import re
 
 
 class RegexConverter(BaseConverter):
@@ -13,7 +14,23 @@ class RegexConverter(BaseConverter):
 
 app = Flask(__name__)
 app.url_map.converters['regex'] = RegexConverter
-mime = magic.Magic(mime=True)
+
+
+class Mime:
+    def __init__(self, path_or_file: str) -> None:
+        mimetypes.init()
+        self.path_or_file = path_or_file
+        self.mimetypes = mimetypes
+        self.pattern = re.compile(r"\.[A-z]*$")
+
+    @property
+    def extract(self) -> str:
+        return self.mimetypes.types_map[
+            re.search(self.pattern, self.path_or_file).group(0)
+        ]
+
+    def __str__(self) -> str:
+        return self.extract
 
 
 @app.route('/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
@@ -28,7 +45,7 @@ def get_file(type_file: str, file_name: str):
     )
     response = Response(
         stream_with_context(media.raw),
-        content_type=mime.from_file(file_name),
+        content_type=Mime(file_name),
         status=media.status_code
     )
     response.headers["Content-Disposition"] = "inline"
