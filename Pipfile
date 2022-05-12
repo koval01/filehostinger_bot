@@ -8,6 +8,7 @@ aiogram = "*"
 requests = "*"
 flask = "*"
 werkzeug = "*"
+gunicorn = "*"
 
 [dev-packages]
 
