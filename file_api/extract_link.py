@@ -32,8 +32,9 @@ class Extractor:
         except Exception as e:
             log.error("%s: %s" % (self.check_file_data.__name__, e))
 
-    def check_size(self, file_data: dict) -> bool:
-        return True if 20971520 > file_data["file_size"] else False
+    @property
+    def check_size(self) -> bool:
+        return True if 20971520 > self.file_size else False
 
     @property
     def file_data_prepare(self) -> str:
@@ -47,6 +48,6 @@ class Extractor:
 
     @property
     def build_link(self) -> str:
-        if not self.check_size():
+        if not self.check_size:
             return "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
         return "%s/%s" % (config.HOST, self.file_id)
