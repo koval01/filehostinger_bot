@@ -54,13 +54,13 @@ class Mime:
 
 
 @app.route('/')
-def to_bot():
+def to_bot() -> redirect:
     return redirect("https://t.me/%s" % config.BOT_NAME, code=301)
 
 
 @app.route('/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
 @cache.cached(timeout=600)
-def get_file(type_file: str, file_name: str):
+def get_file(type_file: str, file_name: str) -> Response:
     media = http_get(
         'https://api.telegram.org/file/bot%s/%s/%s' % (
             config.BOT_TOKEN, type_file, file_name

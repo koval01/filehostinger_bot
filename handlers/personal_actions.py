@@ -5,8 +5,8 @@ from file_api.extract_link import Extractor
 
 
 @dp.message_handler(commands=['start', 'help'])
-async def send_welcome(message: types.Message):
-    await message.reply(
+async def send_welcome(msg: types.Message):
+    await msg.reply(
         "Send me any file weighing up to 20 megabytes. The file can be any: photo, video, "
         "document, voice message, video note, gif, sticker... In reply, I will send you a"
         " link with direct access to this file / media content"
