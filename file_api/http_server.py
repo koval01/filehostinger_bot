@@ -4,7 +4,7 @@ from flask import Flask, request, stream_with_context, Response, redirect
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
 from requests import get as http_get
-from file_api.extract_link import Extractor
+from .extract_link import Extractor
 import config
 import mimetypes
 import re
