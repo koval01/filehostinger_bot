@@ -27,9 +27,9 @@ class Extractor:
             )
             if response.status_code >= 200 < 300:
                 return response.json()["result"]
+            return
         except Exception as e:
             log.error("%s: %s" % (self.get_file_data.__name__, e))
-        return
 
     def check_file_data(self, data: dict) -> str or None:
         try:
