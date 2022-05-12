@@ -5,8 +5,9 @@ from aiogram.types import Message
 
 
 class Extractor:
-    def __init__(self, file_id: str) -> None:
+    def __init__(self, file_id: str, msg: Message = None) -> None:
         self.file_id = file_id
+        self.msg = msg
 
     @property
     async def get_file_data(self) -> dict or None:
@@ -29,14 +30,14 @@ class Extractor:
     def check_size(self, file_data: dict) -> bool:
         return True if file_data["file_size"] < 20971520 else False
 
-    async def build_link(self, message: Message = None) -> str or None:
+    async def build_link(self) -> str or None:
         try:
             resp = await self.get_file_data
             if self.check_size(resp):
                 data = await self.check_file_data(resp)
                 return "%s/%s" % (config.HOST, data) if data else None
             else:
-                await message.reply(
+                await self.msg.reply(
                     "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
                 )
         except Exception as e:
