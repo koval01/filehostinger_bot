@@ -23,10 +23,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Mime:
-    def __init__(self, path_or_file: str) -> None:
+    def __init__(self, path_or_file: str, default_mime: str = "application/octet-stream") -> None:
         mimetypes.init()
         self.path_or_file = path_or_file
         self.mimetypes = mimetypes
+        self.default_mime = default_mime
         self.pattern = re.compile(r"\.[A-z0-9]*$")
 
     @property
@@ -38,8 +39,17 @@ class Mime:
         except:
             return ""
 
+    def alter_type(self) -> str:
+        try:
+            content_type = self.extract
+            if not content_type:
+                raise
+        except Exception as e:
+            logging.debug("MIME detect error! Details: %s" % e)
+            content_type = self.default_mime
+
     def __str__(self) -> str:
-        return self.extract
+        return self.alter_type
 
 
 @app.route('/')
@@ -58,16 +68,9 @@ def get_file(type_file: str, file_name: str):
             'user-agent': request.headers.get('user-agent')
         }
     )
-    try:
-        content_type = Mime(file_name)
-        if not content_type:
-            raise
-    except Exception as e:
-        logging.debug("MIME detect error! Details: %s" % e)
-        content_type = media.headers.get('Content-Type')
     response = Response(
         stream_with_context(media.raw),
-        content_type=content_type,
+        content_type=Mime(file_name),
         status=media.status_code
     )
     response.headers["Content-Disposition"] = "inline"
