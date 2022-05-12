@@ -1,3 +1,3 @@
-# group ids or account ids can be retrieved with @username_to_id_bot
-BOT_TOKEN="<bot-token>"
-BOT_OWNER=<bot-owner-id>
+BOT_TOKEN = "5356330694:AAG7n4xEMUxSOSz82RmM2S7jWEYFim4OX6g"
+BOT_OWNER = 0
+HOST = "https://file-loader-bot.herokuapp.com"
