@@ -102,6 +102,7 @@ def get_file(file_id: str) -> Response:
         status=media.status_code
     )
     response.headers["accept-ranges"] = "bytes"
+    response.headers["content-disposition"] = "inline"
     return response
 
 
