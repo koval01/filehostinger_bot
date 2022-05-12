@@ -67,13 +67,13 @@ def get_file(file_id: str) -> Response:
     media = http_get(
         'https://api.telegram.org/file/bot%s/%s' % (
             config.BOT_TOKEN, data
-        ), stream=True,
+        ),
         headers={
             'user-agent': request.headers.get('user-agent')
         }
     )
     response = Response(
-        stream_with_context(media.raw),
+        media.content,
         content_type=Mime(data),
         status=media.status_code
     )
