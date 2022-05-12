@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask, request, stream_with_context, Response
+from flask import Flask, request, stream_with_context, Response, redirect
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
 from requests import get as http_get
@@ -40,6 +40,11 @@ class Mime:
 
     def __str__(self) -> str:
         return self.extract
+
+
+@app.route('/')
+def to_bot():
+    return redirect("https://t.me/%s" % config.BOT_NAME, code=301)
 
 
 @app.route('/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
