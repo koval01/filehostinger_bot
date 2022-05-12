@@ -44,9 +44,10 @@ class Mime:
             content_type = self.extract
             if not content_type:
                 raise
+            return content_type
         except Exception as e:
             logging.debug("MIME detect error! Details: %s" % e)
-            content_type = self.default_mime
+            return self.default_mime
 
     def __str__(self) -> str:
         return self.alter_type
