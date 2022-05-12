@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, request, stream_with_context, Response
 from werkzeug.routing import BaseConverter
 from requests import get as http_get
@@ -43,9 +45,14 @@ def get_file(type_file: str, file_name: str):
             'user-agent': request.headers.get('user-agent')
         }
     )
+    try:
+        content_type = Mime(file_name)
+    except Exception as e:
+        logging.debug("MIME detect error! Details: %s" % e)
+        content_type = media.headers.get('content-type')
     response = Response(
         stream_with_context(media.raw),
-        content_type=Mime(file_name),
+        content_type=content_type,
         status=media.status_code
     )
     response.headers["Content-Disposition"] = "inline"
