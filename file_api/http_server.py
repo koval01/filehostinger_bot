@@ -65,7 +65,7 @@ def to_bot() -> redirect:
 def get_file(file_id: str) -> Response:
     media = http_get(
         'https://api.telegram.org/file/bot%s/%s' % (
-            config.BOT_TOKEN, Extractor(file_id).file_data_prepare
+            config.BOT_TOKEN, Extractor(file_id=file_id).file_data_prepare
         ), stream=True,
         headers={
             'user-agent': request.headers.get('user-agent')

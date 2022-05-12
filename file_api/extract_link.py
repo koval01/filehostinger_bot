@@ -6,14 +6,17 @@ from datetime import timedelta
 
 
 class Extractor:
-    def __init__(self, msg: Message, photo: bool = False) -> None:
+    def __init__(self, msg: Message = None, photo: bool = False, file_id: str = None) -> None:
         self.session = requests_cache.CachedSession(
             'cache_extractor', backend='memory', expire_after=timedelta(minutes=30)
         )
-        self.photo = msg.photo[-1:][0] if photo else None
-        self.file_id, self.file_size = (self.photo.file_id, self.photo.file_size) if photo else (
-            eval("msg.%s.%s" % (msg.content_type, e)) for e in ["file_id", "file_size"]
-        )
+        if msg:
+            self.photo = msg.photo[-1:][0] if photo else None
+            self.file_id, self.file_size = (self.photo.file_id, self.photo.file_size) if photo else (
+                eval("msg.%s.%s" % (msg.content_type, e)) for e in ["file_id", "file_size"]
+            )
+        else:
+            self.file_id = file_id
 
     @property
     def get_file_data(self) -> dict or None:
