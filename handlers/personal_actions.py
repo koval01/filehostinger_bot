@@ -2,7 +2,15 @@ from aiogram import types
 from aiogram.types import ContentType
 from dispatcher import dp
 from file_api.extract_link import Extractor
-import config
+
+
+@dp.message_handler(commands=['start', 'help'])
+async def send_welcome(message: types.Message):
+    await message.reply(
+        "Send me any file weighing up to 20 megabytes. The file can be any: photo, video, "
+        "document, voice message, video note, gif, sticker... In reply, I will send you a"
+        " link with direct access to this file / media content"
+    )
 
 
 @dp.message_handler(content_types=ContentType.PHOTO)
@@ -10,11 +18,11 @@ async def take_photo(msg: types.Message):
     await msg.reply(await Extractor(msg.photo[-1:][0].file_id, msg).build_link())
 
 
-@dp.message_handler(content_types=[ContentType.DOCUMENT, ContentType.ANIMATION])
+@dp.message_handler(content_types=[
+    ContentType.STICKER, ContentType.VIDEO_NOTE, ContentType.VOICE,
+    ContentType.VIDEO, ContentType.DOCUMENT, ContentType.ANIMATION
+])
 async def take_file(msg: types.Message):
-    await msg.reply(await Extractor(msg.document.file_id, msg).build_link())
-
-
-@dp.message_handler(content_types=ContentType.STICKER)
-async def take_file(msg: types.Message):
-    await msg.reply(await Extractor(msg.sticker.file_id, msg).build_link())
+    await msg.reply(await Extractor(
+        eval("msg.%s.file_id" % msg.content_type), msg
+    ).build_link())
