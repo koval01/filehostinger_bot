@@ -3,7 +3,7 @@ import logging
 from flask import Flask, request, stream_with_context, Response, redirect
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
-from extract_link import Extractor
+from file_api.extract_link import Extractor
 from requests import get as http_get
 import config
 import mimetypes
