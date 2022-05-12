@@ -3,7 +3,6 @@ import logging
 from flask import Flask, request, stream_with_context, Response, redirect
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
-from file_api.extract_link import Extractor
 from requests import get as http_get
 import config
 import mimetypes
@@ -35,7 +34,7 @@ class Mime:
     def extract(self) -> str:
         try:
             return self.mimetypes.types_map[
-                re.search(self.pattern, str(self.path_or_file)).group(0)
+                re.search(self.pattern, self.path_or_file).group(0)
             ]
         except:
             return ""
@@ -60,13 +59,12 @@ def to_bot() -> redirect:
     return redirect("https://t.me/%s" % config.BOT_NAME, code=301)
 
 
-@app.route('/<regex(".*"):file_id>', methods=['GET'])
+@app.route('/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
 @cache.cached(timeout=600)
-def get_file(file_id: str) -> Response:
-    data = Extractor(file_id=file_id)
+def get_file(type_file: str, file_name: str) -> Response:
     media = http_get(
-        'https://api.telegram.org/file/bot%s/%s' % (
-            config.BOT_TOKEN, data
+        'https://api.telegram.org/file/bot%s/%s/%s' % (
+            config.BOT_TOKEN, type_file, file_name
         ), stream=True,
         headers={
             'user-agent': request.headers.get('user-agent')
@@ -74,7 +72,7 @@ def get_file(file_id: str) -> Response:
     )
     response = Response(
         stream_with_context(media.raw),
-        content_type=Mime(data),
+        content_type=Mime(file_name),
         status=media.status_code
     )
     response.headers["Content-Disposition"] = "inline"
@@ -82,4 +80,4 @@ def get_file(file_id: str) -> Response:
 
 
 if __name__ == "__main__":
-    app.run(port=6711)
+    app.run()
