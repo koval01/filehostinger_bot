@@ -2,5 +2,6 @@ aiogram
 flask
 flask-caching
 requests
+requests-cache
 werkzeug
 gunicorn
