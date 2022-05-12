@@ -6,12 +6,14 @@ from datetime import timedelta
 
 
 class Extractor:
-    def __init__(self, file_id: str, msg: Message = None) -> None:
+    def __init__(self, msg: Message, photo: bool = False) -> None:
         self.session = requests_cache.CachedSession(
             'cache_extractor', backend='memory', expire_after=timedelta(minutes=30)
         )
-        self.file_id = file_id
-        self.msg = msg
+        self.photo = msg.photo[-1:][0] if photo else None
+        self.file_id, self.file_size = (self.photo.file_id, self.photo.file_size) if photo else (
+            eval("msg.%s.%s" % (msg.content_type, e)) for e in ["file_id", "file_size"]
+        )
 
     @property
     def get_file_data(self) -> dict or None:
@@ -37,17 +39,14 @@ class Extractor:
     def file_data_prepare(self) -> str:
         try:
             resp = self.get_file_data
-            if self.check_size(resp):
-                data = self.check_file_data(resp)
-                return data["file_path"]
-            else:
-                self.msg.reply(
-                    "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
-                )
+            data = self.check_file_data(resp)
+            return data["file_path"]
         except Exception as e:
             log.error("%s: %s" % (self.file_data_prepare.__name__, e))
         return "Unknown error"
 
     @property
     def build_link(self) -> str:
+        if not self.check_size():
+            return "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
         return "%s/%s" % (config.HOST, self.file_id)
