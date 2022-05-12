@@ -48,7 +48,8 @@ class Mime:
             return self.mimetypes.types_map[
                 re.search(self.pattern, str(self.path_or_file)).group(0)
             ]
-        except:
+        except Exception as e:
+            logging.error("Error resolve file type. Data: %s; Except: %s" % (self.path_or_file, e))
             return ""
 
     @property
