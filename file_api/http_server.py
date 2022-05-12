@@ -37,7 +37,7 @@ logging.basicConfig(level=logging.INFO)
 class Mime:
     def __init__(self, path_or_file: str, default_mime: str = "application/octet-stream") -> None:
         mimetypes.init()
-        self.path_or_file = path_or_file
+        self.path_or_file = path_or_file.lower()
         self.mimetypes = mimetypes
         self.default_mime = default_mime
         self.pattern = re.compile(r"\.[A-z0-9]*$")
