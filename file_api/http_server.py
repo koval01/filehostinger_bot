@@ -50,7 +50,7 @@ def get_file(type_file: str, file_name: str):
         content_type = Mime(file_name)
     except Exception as e:
         logging.debug("MIME detect error! Details: %s" % e)
-        content_type = media.headers.get('content-type')
+        content_type = media.headers.get('Content-Type')
     response = Response(
         stream_with_context(media.raw),
         content_type=content_type,
