@@ -49,8 +49,7 @@ class Extractor:
     @property
     def build_link(self) -> str:
         if not self.check_size:
-            return "Max size file is 20 megabytes. Read this " \
-                   "- https://core.telegram.org/bots/api#file"
+            return "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
         return "%s/%s" % (config.HOST, self.file_id)
 
     def __str__(self) -> str:
