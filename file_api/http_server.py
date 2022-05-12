@@ -16,6 +16,7 @@ class RegexConverter(BaseConverter):
 
 app = Flask(__name__)
 app.url_map.converters['regex'] = RegexConverter
+logging.basicConfig(level=logging.INFO)
 
 
 class Mime:
