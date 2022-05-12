@@ -1,8 +1,17 @@
 from flask import Flask, request, stream_with_context
+from werkzeug.routing import BaseConverter
 from requests import get as http_get
 import config
 
+
+class RegexConverter(BaseConverter):
+    def __init__(self, map, *args):
+        self.map = map
+        self.regex = args[0]
+
+
 app = Flask(__name__)
+app.url_map.converters['regex'] = RegexConverter
 
 
 @app.route('/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
