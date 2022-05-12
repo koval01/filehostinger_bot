@@ -1,6 +1,7 @@
 import aiohttp
 import config
 import logging as log
+from aiogram.types import Message
 
 
 class Extractor:
@@ -15,20 +16,28 @@ class Extractor:
                         "https://api.telegram.org/bot%s/getFile" % config.BOT_TOKEN,
                         params={"file_id": self.file_id}
                 ) as response:
-                    return await response.json()
+                    return await response.json()["result"]
         except Exception as e:
             log.error("%s: %s" % (self.get_file_data.__name__, e))
 
     async def check_file_data(self, data: dict) -> str or None:
         try:
-            return data["result"]["file_path"]
+            return data["file_path"]
         except Exception as e:
             log.error("%s: %s" % (self.check_file_data.__name__, e))
 
-    async def build_link(self) -> str or None:
+    def check_size(self, file_data: dict) -> bool:
+        return True if file_data["file_size"] < 20971520 else False
+
+    async def build_link(self, message: Message = None) -> str or None:
         try:
             resp = await self.get_file_data
-            data = await self.check_file_data(resp)
-            return "%s/%s" % (config.HOST, data) if data else None
+            if self.check_size(resp):
+                data = await self.check_file_data(resp)
+                return "%s/%s" % (config.HOST, data) if data else None
+            else:
+                await message.reply(
+                    "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
+                )
         except Exception as e:
             log.error("%s: %s" % (self.build_link.__name__, e))
