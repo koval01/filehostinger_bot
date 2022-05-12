@@ -16,7 +16,7 @@ app.url_map.converters['regex'] = RegexConverter
 
 @app.route('/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
 def get_file(type_file: str, file_name: str):
-    response = http_get(
+    media = http_get(
         'https://api.telegram.org/file/bot%s/%s/%s' % (
             config.BOT_TOKEN, type_file, file_name
         ), stream=True,
@@ -24,8 +24,10 @@ def get_file(type_file: str, file_name: str):
             'user-agent': request.headers.get('user-agent')
         }
     )
-    return Response(
-        stream_with_context(response.raw),
-        content_type=response.headers.get('content-type'),
-        status=response.status_code
+    response = Response(
+        stream_with_context(media.raw),
+        content_type=media.headers.get('content-type'),
+        status=media.status_code
     )
+    response.headers["Content-Disposition"] = "inline"
+    return response
