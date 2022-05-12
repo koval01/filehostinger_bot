@@ -39,7 +39,6 @@ class Mime:
         except:
             return ""
 
-    @property
     def alter_type(self) -> str:
         try:
             content_type = self.extract
