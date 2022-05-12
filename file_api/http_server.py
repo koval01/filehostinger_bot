@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask, request, stream_with_context, Response, redirect
+from flask import Flask, request, Response, redirect
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
 from file_api.extract_link import Extractor
@@ -77,7 +77,7 @@ def get_file(file_id: str) -> Response:
         content_type=Mime(data),
         status=media.status_code
     )
-    response.headers["Content-Disposition"] = "inline"
+    response.headers["accept-ranges"] = "bytes"
     return response
 
 
