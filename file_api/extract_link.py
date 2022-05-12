@@ -25,9 +25,11 @@ class Extractor:
                 "https://api.telegram.org/bot%s/getFile" % config.BOT_TOKEN,
                 params={"file_id": self.file_id}
             )
-            return response.json()["result"]
+            if response.status_code >= 200 < 300:
+                return response.json()["result"]
         except Exception as e:
             log.error("%s: %s" % (self.get_file_data.__name__, e))
+        return
 
     def check_file_data(self, data: dict) -> str or None:
         try:
@@ -41,16 +43,14 @@ class Extractor:
 
     @property
     def file_data_prepare(self) -> str:
-        try:
-            resp = self.get_file_data
-            data = self.check_file_data(resp)
-            return data["file_path"]
-        except Exception as e:
-            log.error("%s: %s" % (self.file_data_prepare.__name__, e))
-        return "Unknown error"
+        resp = self.get_file_data
+        return self.check_file_data(resp)
 
     @property
     def build_link(self) -> str:
         if not self.check_size:
             return "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
         return "%s/%s" % (config.HOST, self.file_id)
+
+    def __str__(self) -> str:
+        return self.file_data_prepare

@@ -3,8 +3,8 @@ import logging
 from flask import Flask, request, stream_with_context, Response, redirect
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
+from extract_link import Extractor
 from requests import get as http_get
-from file_api.extract_link import Extractor
 import config
 import mimetypes
 import re
@@ -35,7 +35,7 @@ class Mime:
     def extract(self) -> str:
         try:
             return self.mimetypes.types_map[
-                re.search(self.pattern, self.path_or_file).group(0)
+                re.search(self.pattern, str(self.path_or_file)).group(0)
             ]
         except:
             return ""
@@ -63,9 +63,10 @@ def to_bot() -> redirect:
 @app.route('/<regex(".*"):file_id>', methods=['GET'])
 @cache.cached(timeout=600)
 def get_file(file_id: str) -> Response:
+    data = Extractor(file_id=file_id)
     media = http_get(
         'https://api.telegram.org/file/bot%s/%s' % (
-            config.BOT_TOKEN, Extractor(file_id=file_id).file_data_prepare
+            config.BOT_TOKEN, data
         ), stream=True,
         headers={
             'user-agent': request.headers.get('user-agent')
@@ -73,7 +74,7 @@ def get_file(file_id: str) -> Response:
     )
     response = Response(
         stream_with_context(media.raw),
-        content_type=Mime(file_name),
+        content_type=Mime(data),
         status=media.status_code
     )
     response.headers["Content-Disposition"] = "inline"
@@ -81,4 +82,4 @@ def get_file(file_id: str) -> Response:
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=6711)
