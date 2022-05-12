@@ -26,3 +26,8 @@ async def take_file(msg: types.Message):
     await msg.reply(await Extractor(
         eval("msg.%s.file_id" % msg.content_type), msg
     ).build_link())
+
+
+@dp.message_handler(content_types=ContentType.ANY)
+async def take_photo(msg: types.Message):
+    await msg.reply("This may be a bug, but I don't know how to process your message.")
