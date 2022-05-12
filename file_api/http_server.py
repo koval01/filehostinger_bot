@@ -4,6 +4,7 @@ from flask import Flask, request, stream_with_context, Response, redirect
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
 from requests import get as http_get
+from extract_link import Extractor
 import config
 import mimetypes
 import re
@@ -59,12 +60,12 @@ def to_bot() -> redirect:
     return redirect("https://t.me/%s" % config.BOT_NAME, code=301)
 
 
-@app.route('/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
+@app.route('/<regex(".*"):file_id>', methods=['GET'])
 @cache.cached(timeout=600)
-def get_file(type_file: str, file_name: str) -> Response:
+def get_file(file_id: str) -> Response:
     media = http_get(
-        'https://api.telegram.org/file/bot%s/%s/%s' % (
-            config.BOT_TOKEN, type_file, file_name
+        'https://api.telegram.org/file/bot%s/%s' % (
+            config.BOT_TOKEN, Extractor(file_id).file_data_prepare
         ), stream=True,
         headers={
             'user-agent': request.headers.get('user-agent')

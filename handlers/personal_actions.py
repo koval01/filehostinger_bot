@@ -15,7 +15,7 @@ async def send_welcome(msg: types.Message):
 
 @dp.message_handler(content_types=ContentType.PHOTO)
 async def take_photo(msg: types.Message):
-    await msg.reply(await Extractor(msg.photo[-1:][0].file_id, msg).build_link())
+    await msg.reply(await Extractor(msg.photo[-1:][0].file_id, msg).build_link)
 
 
 @dp.message_handler(content_types=[
@@ -25,7 +25,7 @@ async def take_photo(msg: types.Message):
 async def take_file(msg: types.Message):
     await msg.reply(await Extractor(
         eval("msg.%s.file_id" % msg.content_type), msg
-    ).build_link())
+    ).build_link)
 
 
 @dp.message_handler(content_types=ContentType.ANY)

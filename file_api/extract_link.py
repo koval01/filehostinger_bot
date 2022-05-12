@@ -31,16 +31,21 @@ class Extractor:
     async def check_size(self, file_data: dict) -> bool:
         return True if 20971520 > file_data["file_size"] else False
 
-    async def build_link(self) -> str:
+    @property
+    async def file_data_prepare(self) -> str:
         try:
             resp = await self.get_file_data
             if await self.check_size(resp):
                 data = await self.check_file_data(resp)
-                return "%s/%s" % (config.HOST, data) if data else None
+                return data["file_path"]
             else:
                 await self.msg.reply(
                     "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
                 )
         except Exception as e:
-            log.error("%s: %s" % (self.build_link.__name__, e))
+            log.error("%s: %s" % (self.file_data_prepare.__name__, e))
         return "Unknown error"
+
+    @property
+    async def build_link(self) -> str:
+        return "%s/%s" % (config.HOST, self.file_id)
