@@ -11,6 +11,7 @@ werkzeug = "*"
 gunicorn = "*"
 flask-caching = "*"
 requests-cache = "*"
+sentry-sdk = {extras = ["flask"], version = "*"}
 
 [dev-packages]
 

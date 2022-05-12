@@ -1,13 +1,18 @@
 import logging
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
 from flask import Flask, request, Response, redirect
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
+from werkzeug.exceptions import HTTPException
 from file_api.extract_link import Extractor
 from requests import get as http_get
 import config
 import mimetypes
 import re
+import json
 
 
 class RegexConverter(BaseConverter):
@@ -15,6 +20,12 @@ class RegexConverter(BaseConverter):
         self.map = map
         self.regex = args[0]
 
+
+sentry_sdk.init(
+    dsn=config.SENTRY_CONFIG,
+    integrations=[FlaskIntegration()],
+    traces_sample_rate=1.0
+)
 
 app = Flask(__name__)
 app.url_map.converters['regex'] = RegexConverter
@@ -58,6 +69,18 @@ class Mime:
 @app.route('/')
 def to_bot() -> redirect:
     return redirect("https://t.me/%s" % config.BOT_NAME, code=301)
+
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    response = e.get_response()
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 
 @app.route('/<regex(".*"):file_id>', methods=['GET'])

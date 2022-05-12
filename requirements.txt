@@ -1,6 +1,7 @@
 aiogram
 flask
 flask-caching
+sentry-sdk[flask]
 requests
 requests-cache
 werkzeug
