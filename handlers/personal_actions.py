@@ -10,6 +10,11 @@ async def take_photo(msg: types.Message):
     await msg.reply(await Extractor(msg.photo[-1:][0].file_id).build_link())
 
 
-@dp.message_handler(content_types=ContentType.DOCUMENT)
+@dp.message_handler(content_types=[ContentType.DOCUMENT, ContentType.ANIMATION])
 async def take_file(msg: types.Message):
     await msg.reply(await Extractor(msg.document.file_id).build_link())
+
+
+@dp.message_handler(content_types=ContentType.STICKER)
+async def take_file(msg: types.Message):
+    await msg.reply(await Extractor(msg.sticker.file_id).build_link())
