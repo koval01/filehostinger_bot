@@ -17,7 +17,8 @@ class Extractor:
                         "https://api.telegram.org/bot%s/getFile" % config.BOT_TOKEN,
                         params={"file_id": self.file_id}
                 ) as response:
-                    return await response.json()["result"]
+                    r = await response.json()
+                    return r["result"]
         except Exception as e:
             log.error("%s: %s" % (self.get_file_data.__name__, e))
 
