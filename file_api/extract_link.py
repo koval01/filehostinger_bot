@@ -28,7 +28,7 @@ class Extractor:
             log.error("%s: %s" % (self.check_file_data.__name__, e))
 
     def check_size(self, file_data: dict) -> bool:
-        return True if file_data["file_size"] < 20971520 else False
+        return True if 20971520 > file_data["file_size"] else False
 
     async def build_link(self) -> str or None:
         try:
