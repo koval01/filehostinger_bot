@@ -1,3 +1,5 @@
-BOT_TOKEN = "5356330694:AAG7n4xEMUxSOSz82RmM2S7jWEYFim4OX6g"
-BOT_OWNER = 0
-HOST = "https://file-loader-bot.herokuapp.com"
+from os import getenv
+
+BOT_TOKEN = getenv("BOT_TOKEN")
+BOT_OWNER = getenv("BOT_OWNER")
+HOST = "https://%s.herokuapp.com" % getenv("HEROKU_APP_NAME")
