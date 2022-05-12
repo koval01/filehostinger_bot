@@ -26,7 +26,6 @@ def get_file(type_file: str, file_name: str):
     )
     response = Response(
         stream_with_context(media.raw),
-        content_type="image/png",
         status=media.status_code
     )
     response.headers["Content-Disposition"] = "inline"
