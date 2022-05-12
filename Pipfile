@@ -9,6 +9,7 @@ requests = "*"
 flask = "*"
 werkzeug = "*"
 gunicorn = "*"
+flask-caching = "*"
 
 [dev-packages]
 

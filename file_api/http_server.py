@@ -1,6 +1,7 @@
 import logging
 
 from flask import Flask, request, stream_with_context, Response
+from flask_caching import Cache
 from werkzeug.routing import BaseConverter
 from requests import get as http_get
 import config
@@ -16,6 +17,8 @@ class RegexConverter(BaseConverter):
 
 app = Flask(__name__)
 app.url_map.converters['regex'] = RegexConverter
+cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
+cache.init_app(app)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -40,6 +43,7 @@ class Mime:
 
 
 @app.route('/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
+@cache.cached(timeout=600)
 def get_file(type_file: str, file_name: str):
     media = http_get(
         'https://api.telegram.org/file/bot%s/%s/%s' % (
