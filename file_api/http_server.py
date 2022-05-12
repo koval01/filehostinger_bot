@@ -24,7 +24,7 @@ class Mime:
         mimetypes.init()
         self.path_or_file = path_or_file
         self.mimetypes = mimetypes
-        self.pattern = re.compile(r"\.[A-z]*$")
+        self.pattern = re.compile(r"\.[A-z0-9]*$")
 
     @property
     def extract(self) -> str:
@@ -58,3 +58,7 @@ def get_file(type_file: str, file_name: str):
     )
     response.headers["Content-Disposition"] = "inline"
     return response
+
+
+if __name__ == "__main__":
+    app.run()
