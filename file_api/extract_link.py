@@ -26,7 +26,7 @@ class Extractor:
         )
         if 300 > response.status_code >= 200:
             return response.json()["result"]
-        return
+        raise RuntimeError("Error get file data from Telegram server")
 
     def check_file_data(self, data: dict) -> str or None:
         try:
