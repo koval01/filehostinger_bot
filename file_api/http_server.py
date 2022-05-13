@@ -88,7 +88,7 @@ def handle_exception(e):
 @cache.cached(timeout=600)
 def get_file(file_id: str, type_file: str, file_name: str) -> Response:
     data = Extractor(file_id=file_id)
-    abort(400) if not data.check_file(f"{type_file}/{file_name}") else _
+    abort(400) if not data.check_file(f"{type_file}/{file_name}") else None
     media = http_get(
         'https://api.telegram.org/file/bot%s/%s' % (
             config.BOT_TOKEN, data
