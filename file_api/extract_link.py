@@ -34,6 +34,9 @@ class Extractor:
         except Exception as e:
             log.error("%s: %s" % (self.check_file_data.__name__, e))
 
+    def check_file(self, path: str) -> bool:
+        return True if (self.get_file_data["file_path"] == path) else False
+
     @property
     def check_size(self) -> bool:
         return True if 20971520 > self.file_size else False

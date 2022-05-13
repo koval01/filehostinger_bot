@@ -84,10 +84,12 @@ def handle_exception(e):
     return response
 
 
-@app.route('/<regex(".*"):file_id>', methods=['GET'])
+@app.route('/<regex(".*"):file_id>/<path:type_file>/<regex(".*"):file_name>', methods=['GET'])
 @cache.cached(timeout=600)
-def get_file(file_id: str) -> Response:
+def get_file(file_id: str, type_file: str, file_name: str) -> Response:
     data = Extractor(file_id=file_id)
+    if not data.check_file(f"{type_file}/{file_name}"):
+        return Response({"error": "bad request"}, status=400)
     media = http_get(
         'https://api.telegram.org/file/bot%s/%s' % (
             config.BOT_TOKEN, data
