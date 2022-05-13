@@ -107,7 +107,7 @@ def get_file(file_id: str, type_file: str, file_name: str) -> Response:
     response.headers["accept-ranges"] = "bytes"
     response.headers["content-disposition"] = \
         "attachment; filename=\"%s\"" % request.args.get("org_name") \
-            if type_data == "application/octet-stream" else "inline"
+            if type_data != "application/octet-stream" else "inline"
     return response
 
 
