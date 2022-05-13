@@ -3,7 +3,7 @@ import logging
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-from flask import Flask, request, Response, redirect
+from flask import Flask, request, Response, redirect, abort
 from flask_caching import Cache
 from werkzeug.routing import BaseConverter
 from werkzeug.exceptions import HTTPException
@@ -88,8 +88,7 @@ def handle_exception(e):
 @cache.cached(timeout=600)
 def get_file(file_id: str, type_file: str, file_name: str) -> Response:
     data = Extractor(file_id=file_id)
-    if not data.check_file(f"{type_file}/{file_name}"):
-        return Response({"error": "bad request"}, status=400)
+    abort(400) if not data.check_file(f"{type_file}/{file_name}") else _
     media = http_get(
         'https://api.telegram.org/file/bot%s/%s' % (
             config.BOT_TOKEN, data
