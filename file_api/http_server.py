@@ -98,13 +98,16 @@ def get_file(file_id: str, type_file: str, file_name: str) -> Response:
             'user-agent': request.headers.get('user-agent')
         }
     )
+    type_data = Mime(data)
     response = Response(
         media.content,
-        content_type=Mime(data),
+        content_type=type_data,
         status=media.status_code
     )
     response.headers["accept-ranges"] = "bytes"
-    response.headers["content-disposition"] = "inline"
+    response.headers["content-disposition"] = \
+        "attachment; filename=\"%s\"" % request.args.get("org_name") \
+            if type_data == "application/octet-stream" else "inline"
     return response
 
 

@@ -16,7 +16,10 @@ class Extractor:
             self.file_id, self.file_size = (self.photo.file_id, self.photo.file_size) if photo else (
                 eval("msg.%s.%s" % (msg.content_type, e)) for e in ["file_id", "file_size"]
             )
-        else: self.file_id = file_id
+            if not photo:
+                self.file_name = msg.document.file_name
+        else:
+            self.file_id = file_id
 
     @property
     def get_file_data(self) -> dict or None:
@@ -49,10 +52,18 @@ class Extractor:
         return self.check_file_data(resp)
 
     @property
+    def attach_file_name(self) -> str:
+        try:
+            return "?org_name=%s" % self.file_name
+        except Exception as e:
+            log.debug("File name attach skip. Details: %s" % e)
+            return ""
+
+    @property
     def build_link(self) -> str:
         if not self.check_size:
             return "Max size file is 20 megabytes. Read this - https://core.telegram.org/bots/api#file"
-        return "%s/%s/%s" % (config.HOST, self.file_id, self.get_file_data["file_path"])
+        return f"{config.HOST}/{self.file_id}/{self.get_file_data['file_path']}{self.attach_file_name}"
 
     def __str__(self) -> str:
         return self.file_data_prepare
