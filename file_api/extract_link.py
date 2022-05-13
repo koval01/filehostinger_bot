@@ -19,14 +19,16 @@ class Extractor:
         else: self.file_id = file_id
 
     @property
-    def get_file_data(self) -> dict:
-        response = session.get(
-            "https://api.telegram.org/bot%s/getFile" % config.BOT_TOKEN,
-            params={"file_id": self.file_id}
-        )
-        if 300 > response.status_code >= 200:
-            return response.json()["result"]
-        raise RuntimeError("Error get file data from Telegram server")
+    def get_file_data(self) -> dict or None:
+        try:
+            response = session.get(
+                "https://api.telegram.org/bot%s/getFile" % config.BOT_TOKEN,
+                params={"file_id": self.file_id}
+            )
+            if 300 > response.status_code >= 200:
+                return response.json()["result"]
+        except Exception as e:
+            log.error("Error get file data from Telegram server. Details: %s" % e)
 
     def check_file_data(self, data: dict) -> str or None:
         try:
